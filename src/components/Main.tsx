@@ -11,6 +11,7 @@ import MovieList from './MovieList';
 import Paginator from './Paginator';
 import { Box } from '@material-ui/core';
 import Movie from '../types';
+import { fetch } from '../lib/api';
 
 const drawerWidth = 240;
 
@@ -64,7 +65,7 @@ interface Props {
   window?: () => Window;
 }
 
-const movieData: Movie[] = [
+const staticMovieData: Movie[] = [
   {
     imdbID: 'sdfsdf',
     title: 'asddfhgdfh',
@@ -112,10 +113,21 @@ export default function Main(props: Props) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchString, setSearchString] = useState<string>('');
   const [selectedMovie, setSelectedMovie] = useState<Movie | undefined>(undefined);
+  const [moviesData, setMoviesData] = useState<Movie[]>(staticMovieData);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
+  //   useEffect(() => {
+  //     fetch({}).then((response) => {
+  //       if (response.data.Error) setMoviesData(staticMovieData);
+  //       else {
+  //         console.log(response);
+  //         // setMoviesData(response.data);
+  //       }
+  //     });
+  //   }, []);
 
   const onMovieSelect = (imbdId: string) => {
     //show moview details
@@ -132,9 +144,9 @@ export default function Main(props: Props) {
       />
       <Divider />
       <MovieList
-        movies={searchString ? movieData.filter((movie) => movie.title.indexOf(searchString) > 0) : movieData}
+        movies={searchString ? moviesData.filter((movie) => movie.title.indexOf(searchString) >= 0) : moviesData}
         onSelect={(imdbId: string) => {
-          setSelectedMovie(movieData.find((m) => m.imdbID === imdbId));
+          setSelectedMovie(moviesData.find((m) => m.imdbID === imdbId));
         }}
       />
       <Divider />
