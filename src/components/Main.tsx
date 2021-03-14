@@ -7,6 +7,9 @@ import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/sty
 import Search from './Search';
 import MovieDetails from './MovieDetails';
 import Header from './MovieDetails/Header';
+import MovieList from './MovieList';
+import Paginator from './Paginator';
+import { Box } from '@material-ui/core';
 
 const drawerWidth = 240;
 
@@ -36,11 +39,18 @@ const useStyles = makeStyles((theme: Theme) =>
     // necessary for content to be below app bar
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
-      width: drawerWidth
+      width: drawerWidth,
+      display: 'flex',
+      overflow: 'auto',
+      flexDirection: 'column'
     },
     content: {
       flexGrow: 1,
       padding: theme.spacing(3)
+    },
+    bottomDrawer: {
+      marginTop: 'auto',
+      marginBottom: '.94rem'
     }
   })
 );
@@ -68,11 +78,22 @@ export default function Main(props: Props) {
   };
 
   const drawer = (
-    <div>
-      <div className={classes.toolbar} />
+    <Box display="flex" flexDirection="column">
+      <Box className={classes.toolbar} />
       <Search onChange={(value: string) => filterMovieResults(value)} />
       <Divider />
-    </div>
+      <MovieList />
+      <Divider />
+      <Box className={classes.bottomDrawer}>
+        <Paginator
+          totalPages={10}
+          currentPage={1}
+          onChange={(value: number) => {
+            alert(value);
+          }}
+        />
+      </Box>
+    </Box>
   );
 
   const container = window !== undefined ? () => window().document.body : undefined;
