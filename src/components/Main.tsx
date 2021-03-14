@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
@@ -10,6 +10,7 @@ import Header from './MovieDetails/Header';
 import MovieList from './MovieList';
 import Paginator from './Paginator';
 import { Box } from '@material-ui/core';
+import Movie from '../types';
 
 const drawerWidth = 240;
 
@@ -63,26 +64,79 @@ interface Props {
   window?: () => Window;
 }
 
+const movieData: Movie[] = [
+  {
+    imdbID: 'sdfsdf',
+    title: 'asddfhgdfh',
+    cast: ['asd', 'dsfg'],
+    duration: '100 min',
+    image:
+      'https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg',
+    synopsis: 'sadfsdf',
+    year: '2020',
+    thumbnail:
+      'https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg'
+  },
+  {
+    imdbID: 'ssddfsdf',
+
+    title: 'asdfghfdgh',
+    cast: ['asd', 'dsfg'],
+    duration: '100 min',
+    image:
+      'https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg',
+    synopsis: 'sadfsdf',
+    year: '2020',
+    thumbnail:
+      'https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg'
+  },
+  {
+    imdbID: 'sdfsdfsdf',
+
+    title: 'asderteert',
+    cast: ['asd', 'dsfg'],
+    duration: '100 min',
+    image:
+      'https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg',
+    synopsis: 'sadfsdf',
+    year: '2020',
+    thumbnail:
+      'https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg'
+  }
+];
+
 export default function Main(props: Props) {
   const { window } = props;
   const classes = useStyles();
   const theme = useTheme();
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [searchString, setSearchString] = React.useState<string>('');
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchString, setSearchString] = useState<string>('');
+  const [selectedMovie, setSelectedMovie] = useState<Movie | undefined>(undefined);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-  const filterMovieResults = (value: string) => {
-    setSearchString(value);
+
+  const onMovieSelect = (imbdId: string) => {
+    //show moview details
   };
 
   const drawer = (
     <Box display="flex" flexDirection="column">
       <Box className={classes.toolbar} />
-      <Search onChange={(value: string) => filterMovieResults(value)} />
+      <Search
+        onChange={(value: string) => {
+          setSearchString(value);
+          setSelectedMovie(undefined);
+        }}
+      />
       <Divider />
-      <MovieList />
+      <MovieList
+        movies={searchString ? movieData.filter((movie) => movie.title.indexOf(searchString) > 0) : movieData}
+        onSelect={(imdbId: string) => {
+          setSelectedMovie(movieData.find((m) => m.imdbID === imdbId));
+        }}
+      />
       <Divider />
       <Box className={classes.bottomDrawer}>
         <Paginator
@@ -101,7 +155,7 @@ export default function Main(props: Props) {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <Header title={searchString} />
+      <Header title={selectedMovie?.title || ''} />
       <nav className={classes.drawer} aria-label="mailbox folders">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Hidden smUp implementation="css">
@@ -133,7 +187,7 @@ export default function Main(props: Props) {
           </Drawer>
         </Hidden>
       </nav>
-      {searchString && <MovieDetails />}
+      {selectedMovie && <MovieDetails movie={selectedMovie} />}
     </div>
   );
 }
