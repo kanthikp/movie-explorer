@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Movie from '../../types';
+import { Movie } from '../../types/movie';
 import { Box } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -33,13 +33,13 @@ export default function MovieDetails({ movie }: Props) {
     <Box display="flex" flexDirection="column" alignItems="flex-start">
       <Box display="flex" flexDirection="row" width="30%">
         <Box>
-          <img src={movie?.image} alt="poster" width={100} />
+          <img src={movie?.Poster} alt="poster" width={100} />
         </Box>
         <Box border={1}>
           <Box></Box>
           <Box>
             <Typography>CAST</Typography>
-            <Typography>{movie?.cast.join(',')}</Typography>
+            <Typography>{movie?.Actors}</Typography>
           </Box>
         </Box>
       </Box>
@@ -48,7 +48,7 @@ export default function MovieDetails({ movie }: Props) {
           <strong>Synopsis</strong>
         </Typography>
         <Typography paragraph>
-          <strong>{movie?.synopsis}</strong>
+          <strong>{movie?.Plot}</strong>
         </Typography>
       </Box>
     </Box>

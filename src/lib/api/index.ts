@@ -1,7 +1,9 @@
 import axios, { AxiosResponse } from 'axios';
 
 import environment from '../environment';
-export const apiUrl = 'http://www.omdbapi.com/?i=tt3896198&apikey=3944cd0a'; //`${environment.API_ENDPOINT}/?apikey=${environment.APIKEY}`;
+export const apiEndpoint = environment.API_ENDPOINT;
+export const apiKey = environment.APIKEY;
+export const apiUrl = `${apiEndpoint}?apikey=${apiKey}`;
 
 export const api = axios.create({
   paramsSerializer: (params: any) => {
@@ -11,6 +13,10 @@ export const api = axios.create({
   }
 });
 
-export function fetch({ params }: any): Promise<AxiosResponse<any>> {
+export interface FetchInstruction<T> {
+  params: T;
+}
+
+export function fetch<T>({ params }: FetchInstruction<T>): Promise<AxiosResponse<any>> {
   return api.get(apiUrl, { params: params });
 }

@@ -10,8 +10,8 @@ import Header from './MovieDetails/Header';
 import MovieList from './MovieList';
 import Paginator from './Paginator';
 import { Box } from '@material-ui/core';
-import Movie from '../types';
-import { fetch } from '../lib/api';
+import { Movie, MovieSearchResponse, MovieDetailsResponse } from '../types/movie';
+import { fetchCollection, fetchDetails } from '../repo/movie';
 
 const drawerWidth = 240;
 
@@ -65,47 +65,6 @@ interface Props {
   window?: () => Window;
 }
 
-const staticMovieData: Movie[] = [
-  {
-    imdbID: 'sdfsdf',
-    title: 'asddfhgdfh',
-    cast: ['asd', 'dsfg'],
-    duration: '100 min',
-    image:
-      'https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg',
-    synopsis: 'sadfsdf',
-    year: '2020',
-    thumbnail:
-      'https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg'
-  },
-  {
-    imdbID: 'ssddfsdf',
-
-    title: 'asdfghfdgh',
-    cast: ['asd', 'dsfg'],
-    duration: '100 min',
-    image:
-      'https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg',
-    synopsis: 'sadfsdf',
-    year: '2020',
-    thumbnail:
-      'https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg'
-  },
-  {
-    imdbID: 'sdfsdfsdf',
-
-    title: 'asderteert',
-    cast: ['asd', 'dsfg'],
-    duration: '100 min',
-    image:
-      'https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg',
-    synopsis: 'sadfsdf',
-    year: '2020',
-    thumbnail:
-      'https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg'
-  }
-];
-
 export default function Main(props: Props) {
   const { window } = props;
   const classes = useStyles();
@@ -113,24 +72,31 @@ export default function Main(props: Props) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchString, setSearchString] = useState<string>('');
   const [selectedMovie, setSelectedMovie] = useState<Movie | undefined>(undefined);
-  const [moviesData, setMoviesData] = useState<Movie[]>(staticMovieData);
+  const [moviesData, setMoviesData] = useState<Movie[]>([]);
+  const [totalMovieRecords, setTotalMovieRecords] = useState(0);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  //   useEffect(() => {
-  //     fetch({}).then((response) => {
-  //       if (response.data.Error) setMoviesData(staticMovieData);
-  //       else {
-  //         console.log(response);
-  //         // setMoviesData(response.data);
-  //       }
-  //     });
-  //   }, []);
-
-  const onMovieSelect = (imbdId: string) => {
-    //show moview details
+  const fetchMovieDetails = (imdbId: string) => {
+    fetchDetails({ i: imdbId, plot: 'full' }).then((resp: MovieDetailsResponse | Movie) => {
+      try {
+        debugger;
+        setSelectedMovie(resp as Movie);
+      } catch {}
+    });
+  };
+  const fetchMovies = (params: any) => {
+    fetchCollection(params).then((resp: MovieSearchResponse) => {
+      if (resp.Response === 'True') {
+        setMoviesData(resp.Search || []);
+        setTotalMovieRecords(resp.totalResults || 0);
+      }
+    });
+  };
+  const onPageChange = (pageNumber: number) => {
+    fetchMovies({ s: searchString, type: 'movie', page: pageNumber });
   };
 
   const drawer = (
@@ -140,22 +106,31 @@ export default function Main(props: Props) {
         onChange={(value: string) => {
           setSearchString(value);
           setSelectedMovie(undefined);
+          fetchMovies({ s: searchString, type: 'movie' });
+
+          // fetchCollection({ s: value, type: 'movie' }).then((resp: MovieSearchResponse) => {
+          //   if (resp.Response === 'True') {
+          //     setMoviesData(resp.Search || []);
+          //     setTotalMovieRecords(resp.totalResults || 0);
+          //   }
+          // });
         }}
       />
       <Divider />
       <MovieList
-        movies={searchString ? moviesData.filter((movie) => movie.title.indexOf(searchString) >= 0) : moviesData}
+        movies={moviesData}
         onSelect={(imdbId: string) => {
-          setSelectedMovie(moviesData.find((m) => m.imdbID === imdbId));
+          // setSelectedMovie(moviesData.find((m) => m.imdbID === imdbId));
+          fetchMovieDetails(imdbId);
         }}
       />
       <Divider />
       <Box className={classes.bottomDrawer}>
         <Paginator
-          totalPages={10}
-          currentPage={1}
+          totalMovieRecords={totalMovieRecords}
+          pageSize={10}
           onChange={(value: number) => {
-            alert(value);
+            onPageChange(value);
           }}
         />
       </Box>
@@ -167,7 +142,7 @@ export default function Main(props: Props) {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <Header title={selectedMovie?.title || ''} />
+      <Header title={selectedMovie?.Title || ''} />
       <nav className={classes.drawer} aria-label="mailbox folders">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Hidden smUp implementation="css">

@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import Movie from '../../types';
+import { Movie } from '../../types/movie';
 import MovieTile from '../MovieTile';
 
 const useStyles = makeStyles((theme: Theme) =>
