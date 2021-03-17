@@ -1,16 +1,9 @@
 import React from 'react';
-import './App.css';
+// import './App.css';
 import Main from './components/Main';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        {/* <img src={logo} className="App-logo" alt="logo" /> */}
-        <Main></Main>
-      </header>
-    </div>
-  );
+  return <Main></Main>;
 }
 
 export default App;

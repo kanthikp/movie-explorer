@@ -5,23 +5,15 @@ import { Box, IconButton } from '@material-ui/core';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'flex'
-    }
-  })
-);
 interface Props {
   totalMovieRecords: number;
   pageSize: number;
   onChange: (value: number) => void;
 }
 export default function Paginator({ totalMovieRecords, pageSize, onChange }: Props) {
-  const classes = useStyles();
   const [currentPage, setCurrentPage] = useState(1);
   return (
-    <Box display="flex" alignItems="center" justifyContent="space-between">
+    <Box display="flex" alignItems="center" justifyContent="space-between" width="350px" mt="auto">
       <IconButton
         aria-label="prev"
         onClick={() => {

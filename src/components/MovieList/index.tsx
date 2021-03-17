@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { Movie } from '../../types/movie';
 import MovieTile from '../MovieTile';
+import { Box } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -18,7 +19,7 @@ interface Props {
 export default function MovieList({ movies, onSelect }: Props) {
   const classes = useStyles();
   return (
-    <>
+    <Box width={1} mb={2}>
       {movies?.map((movie, index) => {
         return (
           <MovieTile
@@ -30,6 +31,6 @@ export default function MovieList({ movies, onSelect }: Props) {
           />
         );
       })}
-    </>
+    </Box>
   );
 }

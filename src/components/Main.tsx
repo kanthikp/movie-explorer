@@ -13,50 +13,6 @@ import { Box } from '@material-ui/core';
 import { Movie, MovieSearchResponse, MovieDetailsResponse } from '../types/movie';
 import { fetchCollection, fetchDetails } from '../repo/movie';
 
-const drawerWidth = 240;
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'flex'
-    },
-    drawer: {
-      [theme.breakpoints.up('sm')]: {
-        width: drawerWidth,
-        flexShrink: 0
-      }
-    },
-    appBar: {
-      [theme.breakpoints.up('sm')]: {
-        width: `calc(100% - ${drawerWidth}px)`,
-        marginLeft: drawerWidth
-      }
-    },
-    menuButton: {
-      marginRight: theme.spacing(2),
-      [theme.breakpoints.up('sm')]: {
-        display: 'none'
-      }
-    },
-    // necessary for content to be below app bar
-    toolbar: theme.mixins.toolbar,
-    drawerPaper: {
-      width: drawerWidth,
-      display: 'flex',
-      overflow: 'auto',
-      flexDirection: 'column'
-    },
-    content: {
-      flexGrow: 1,
-      padding: theme.spacing(3)
-    },
-    bottomDrawer: {
-      marginTop: 'auto',
-      marginBottom: '.94rem'
-    }
-  })
-);
-
 interface Props {
   /**
    * Injected by the documentation to work in an iframe.
@@ -67,7 +23,7 @@ interface Props {
 
 export default function Main(props: Props) {
   const { window } = props;
-  const classes = useStyles();
+  // const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchString, setSearchString] = useState<string>('');
@@ -99,21 +55,21 @@ export default function Main(props: Props) {
     fetchMovies({ s: searchString, type: 'movie', page: pageNumber });
   };
 
-  const drawer = (
-    <Box display="flex" flexDirection="column">
-      <Box className={classes.toolbar} />
+  const searchPanel = (
+    <Box
+      display="flex"
+      alignItems="flex-start"
+      flexDirection="column"
+      justifyContent="center"
+      p={2}
+      width={1}
+      height="90%"
+    >
       <Search
         onChange={(value: string) => {
           setSearchString(value);
           setSelectedMovie(undefined);
           fetchMovies({ s: searchString, type: 'movie' });
-
-          // fetchCollection({ s: value, type: 'movie' }).then((resp: MovieSearchResponse) => {
-          //   if (resp.Response === 'True') {
-          //     setMoviesData(resp.Search || []);
-          //     setTotalMovieRecords(resp.totalResults || 0);
-          //   }
-          // });
         }}
       />
       <Divider />
@@ -125,26 +81,30 @@ export default function Main(props: Props) {
         }}
       />
       <Divider />
-      <Box className={classes.bottomDrawer}>
-        <Paginator
-          totalMovieRecords={totalMovieRecords}
-          pageSize={10}
-          onChange={(value: number) => {
-            onPageChange(value);
-          }}
-        />
-      </Box>
+      <Paginator
+        totalMovieRecords={totalMovieRecords}
+        pageSize={10}
+        onChange={(value: number) => {
+          onPageChange(value);
+        }}
+      />
     </Box>
   );
 
   const container = window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <div className={classes.root}>
+    <>
+      <Box width={1} height="100vh" display="flex">
+        <Box minWidth="350px">{searchPanel}</Box>
+        <Box width="calc(100%-350px)" display="flex" bgcolor="blue">
+          {selectedMovie && <MovieDetails movie={selectedMovie} />}
+        </Box>
+      </Box>
+      {/* <div className={classes.root}>
       <CssBaseline />
       <Header title={selectedMovie?.Title || ''} />
       <nav className={classes.drawer} aria-label="mailbox folders">
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Hidden smUp implementation="css">
           <Drawer
             container={container}
@@ -175,6 +135,7 @@ export default function Main(props: Props) {
         </Hidden>
       </nav>
       {selectedMovie && <MovieDetails movie={selectedMovie} />}
-    </div>
+    </div> */}
+    </>
   );
 }
