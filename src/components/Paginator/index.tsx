@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { Box, IconButton } from '@material-ui/core';
+import { Box, Button } from '@material-ui/core';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 
@@ -12,9 +11,12 @@ interface Props {
 }
 export default function Paginator({ totalMovieRecords, pageSize, onChange }: Props) {
   const [currentPage, setCurrentPage] = useState(1);
-  return (
+  const totalPages = Math.ceil(totalMovieRecords / pageSize);
+  return totalPages > 0 ? (
     <Box display="flex" alignItems="center" justifyContent="space-between" width="350px" mt="auto">
-      <IconButton
+      <Button
+        variant="outlined"
+        size="small"
         aria-label="prev"
         onClick={() => {
           setCurrentPage(currentPage - 1);
@@ -23,20 +25,24 @@ export default function Paginator({ totalMovieRecords, pageSize, onChange }: Pro
         disabled={currentPage === 1}
       >
         <ArrowLeftIcon />
-      </IconButton>
+      </Button>
       <Typography>
-        Pages {currentPage}/{Math.ceil(totalMovieRecords / pageSize)}
+        Pages {currentPage}/{totalPages}
       </Typography>
-      <IconButton
+      <Button
+        variant="outlined"
+        size="small"
         aria-label="next"
         onClick={() => {
           setCurrentPage(currentPage + 1);
           onChange(currentPage + 1);
         }}
-        disabled={currentPage === Math.ceil(totalMovieRecords / pageSize)}
+        disabled={currentPage === totalPages}
       >
         <ArrowRightIcon />
-      </IconButton>
+      </Button>
     </Box>
+  ) : (
+    <></>
   );
 }

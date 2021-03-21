@@ -1,33 +1,27 @@
-import React from 'react';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import React, { useState } from 'react';
 import { Movie } from '../../types/movie';
-import MovieTile from '../MovieTile';
 import { Box } from '@material-ui/core';
+import MediaCard from '../MovieTile/mediaCard';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'flex'
-    }
-  })
-);
 interface Props {
   movies?: Movie[];
   onSelect: (imbdId: string) => void;
 }
 
 export default function MovieList({ movies, onSelect }: Props) {
-  const classes = useStyles();
+  const [selected, setSelected] = useState('');
   return (
-    <Box width={1} mb={2}>
+    <Box width={1} mb={2} style={{ overflowY: 'scroll' }}>
       {movies?.map((movie, index) => {
         return (
-          <MovieTile
+          <MediaCard
             key={`movie-${index}`}
             movie={movie}
             onSelect={(id: string) => {
               onSelect(id);
+              setSelected(id);
             }}
+            selected={selected === movie.imdbID}
           />
         );
       })}

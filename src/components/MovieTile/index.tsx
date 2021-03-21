@@ -17,11 +17,10 @@ interface Props {
 }
 
 export default function MovieTile({ movie, onSelect }: Props) {
-  const classes = useStyles();
   return (
-    <Box border={1} display="flex" alignItems="center" onClick={() => onSelect(movie.imdbID)}>
+    <Box borderBottom={1} display="flex" alignItems="center" onClick={() => onSelect(movie.imdbID)}>
       <Box width="30%">
-        <img src={movie.Poster} style={{ width: '40px', height: '40px' }} />
+        <img src={movie.Poster} style={{ width: '40px', height: '40px' }} alt="poster" />
       </Box>
       <Box display="flex" flexDirection="column" justifyContent="flex-start" alignItems="center">
         <Typography variant="body1">

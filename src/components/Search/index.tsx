@@ -7,15 +7,16 @@ interface Props {
 }
 export default function Search({ onChange }: Props) {
   return (
-    <Box width={1} pb={2}>
+    <Box width={1} pb={2} mb="auto">
       <TextField
         fullWidth
+        type="search"
         variant="outlined"
         placeholder="Search"
         size="small"
         InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
+          startAdornment: (
+            <InputAdornment position="start">
               <SearchIcon />
             </InputAdornment>
           )

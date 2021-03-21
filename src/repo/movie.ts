@@ -1,4 +1,3 @@
-import { map } from 'ramda';
 import { fetch } from '../lib/api';
 import { Movie, MovieSearchResponse, MovieDetailsResponse } from '../types/movie';
 
